@@ -52,7 +52,7 @@
 ```
 
 - 2 번 엎음 ^^
-- number 나 Enum 을 설정하지말자 -> 확장성이 떨어짐ㅌ
+- number 나 Enum 을 설정하지말자 -> 확장성이 떨어짐
   - JSON 은 "1200"이나 1200 이나 똑같다
   - String to Number 가 훨~~~씬 안전하다
   - URL 을 활용하면 좋다
@@ -74,7 +74,7 @@
 1. Query 를 하고 싶어요!
    - Athena 를 쓰세요!
 2. 유저에 맞게 개인적인 Query
-   - Athena 를 쓰서 GroupBygotj s3 에 쓴다
+   - Athena 를 쓰서 GroupBy 해서 s3 에 쓴다
    - 이 파일을 Aurora 로 읽음 -> 빠른 접근이 접근이 가능한 DB 로 옮김
    - Application 으로는 Aurora 로 쿼리
 3. 머신러닝 -> 금단의 단어
