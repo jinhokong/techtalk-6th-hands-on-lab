@@ -1,103 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Vingle Tech Talk 6th!</title>
   <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,minimum-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css" type="text/css">
 </head>
+
 <body>
-<div class="container">
-  <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a href="#" class="navbar-item is-active">Videos</a>
-    </div>
-  </nav>
+  <div class="container">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a href="#" class="navbar-item is-active">Videos</a>
+      </div>
+    </nav>
 
-  <h2>Welcome to Vingle Tech Talk 6th!</h2>
+    <h2>Welcome to Vingle Tech Talk 6th!</h2>
 
-  <p>
-    <button type="button" class="button" onclick="changeVideo()">Change Video</button>
-  </p>
-  <div class="card">
-    <div class="card-image">
-      <video controls id="video" onplaying="onPlaying()" onpause="onPause()"></video>
+    <p>
+      <button type="button" class="button" onclick="changeVideo()">Change Video</button>
+    </p>
+    <div class="card">
+      <div class="card-image">
+        <video controls id="video" onplaying="onPlaying()" onpause="onPause()"></video>
+      </div>
     </div>
   </div>
-</div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
-<script type="text/javascript">
-  const BASE_URL = (function () {
-    const el = document.createElement("a");
-    el.href = location.origin + location.pathname + "/../";
-    const resolvedURL = el.href; // hack: resolved url will be returned
-    el.remove();
-    return resolvedURL.replace(/[\/]+$/, ""); // remove trailing slashes
-  })();
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script type="text/javascript">
+    const BASE_URL = (function () {
+      const el = document.createElement("a");
+      el.href = location.origin + location.pathname + "/../";
+      const resolvedURL = el.href; // hack: resolved url will be returned
+      el.remove();
+      return resolvedURL.replace(/[\/]+$/, ""); // remove trailing slashes
+    })();
 
-  const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-  });
+    const axiosInstance = axios.create({
+      baseURL: BASE_URL,
+    });
 
-  ((root) => {
-    const VIDEO_URLS = [
-      'https://i.imgur.com/IY678sD.mp4',
-      'https://i.imgur.com/2swrmoj.mp4',
-      'https://i.imgur.com/2o6l8gv.mp4',
-      'https://i.imgur.com/JhSSQH1.mp4',
-    ];
+    ((root) => {
+      const VIDEO_URLS = [
+        'https://i.imgur.com/IY678sD.mp4',
+        'https://i.imgur.com/2swrmoj.mp4',
+        'https://i.imgur.com/2o6l8gv.mp4',
+        'https://i.imgur.com/JhSSQH1.mp4',
+      ];
 
-    // 총 시청시간, 평균 시청 지속 시간
-    let startedAt = 0;
+      // 총 시청시간, 평균 시청 지속 시간
+      let startedAt = 0;
 
-    root.changeVideo = () => {
-      root.video.pause();
+      root.changeVideo = () => {
+        root.video.pause();
 
-      // Give some time to trigger pause event
-      setTimeout(() => {
-        root.video.src = _.sample(VIDEO_URLS);
-        root.video.load();
-      }, 10);
-    };
-
-    root.onPlaying = () => {
-      startedAt = root.video.currentTime;
-    };
-
-    root.onPause = () => {
-      const videoId = root.video.src;
-      const endedAt = root.video.currentTime;
-      recordEvent(videoId, startedAt, endedAt);
-      startedAt = 0;
-    };
-
-    root.recordEvent = (videoId, start, end) => {
-      // Build Event Payload
-      const event = {
-        user_id: 12345,
-        video_id: videoId,
-        logged_at: Math.floor(Date.now() / 1000), // Unix Timestamp
-        started_at: Math.floor(start * 1000), // offset in milliseconds
-        ended_at: Math.floor(end * 1000), // offset in milliseconds
-        referer: location.href,
-        user_agent: navigator.userAgent,
+        // Give some time to trigger pause event
+        setTimeout(() => {
+          root.video.src = _.sample(VIDEO_URLS);
+          root.video.load();
+        }, 10);
       };
 
-      // Log Event payload to console
-      console.log('recording event: ', event);
+      root.onPlaying = () => {
+        startedAt = root.video.currentTime;
+      };
 
-      // Send to Collect API
-      axiosInstance({
-        method: 'POST',
-        url: '/events',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: event,
-      });
-    };
-  })(window);
-</script>
+      root.onPause = () => {
+        const videoId = root.video.src;
+        const endedAt = root.video.currentTime;
+        recordEvent(videoId, startedAt, endedAt);
+        startedAt = 0;
+      };
+
+      root.recordEvent = (videoId, start, end) => {
+        // Build Event Payload
+        const event = {
+          user_id: 12345,
+          video_id: videoId,
+          logged_at: Math.floor(Date.now() / 1000), // Unix Timestamp
+          started_at: Math.floor(start * 1000), // offset in milliseconds
+          ended_at: Math.floor(end * 1000), // offset in milliseconds
+          referer: location.href,
+          user_agent: navigator.userAgent,
+        };
+
+        // Log Event payload to console
+        console.log('recording event: ', event);
+
+        // Send to Collect API
+        axiosInstance({
+          method: 'POST',
+          url: '/events',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: event,
+        });
+      };
+    })(window);
+  </script>
 </body>
+
 </html>
